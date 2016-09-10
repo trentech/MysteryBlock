@@ -1,5 +1,6 @@
 package com.gmail.trentech.mysteryblock.commands;
 
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -14,21 +15,14 @@ import ninja.leaping.configurate.ConfigurationNode;
 
 public class CMDRemove implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!args.hasAny("block")) {
-			src.sendMessage(Text.of(TextColors.RED, "<block> Not enough arguments"));
-			src.sendMessage(Text.of(TextColors.YELLOW, "/mb remove <block> [name]"));
-			return CommandResult.success();
-		}
-		String child = args.<String>getOne("block").get();
+		String child = args.<BlockType>getOne("block").get().getId();
 
 		ConfigManager configManager = ConfigManager.get();
 		ConfigurationNode parent = configManager.getConfig().getNode("blocks");
 		ConfigurationNode node = parent.getNode(child);
 
 		if (node.isVirtual()) {
-			src.sendMessage(Text.of(TextColors.RED, "<block> ", child, " node does not exist"));
-			src.sendMessage(Text.of(TextColors.YELLOW, "/mb remove <block> [name]"));
-			return CommandResult.success();
+			throw new CommandException(Text.of(TextColors.RED, "<block> ", child, " node does not exist"));
 		}
 
 		if (args.hasAny("name")) {
@@ -38,9 +32,7 @@ public class CMDRemove implements CommandExecutor {
 			node = parent.getNode(name);
 
 			if (node.isVirtual()) {
-				src.sendMessage(Text.of(TextColors.RED, "<name> ", name, " node does not exist"));
-				src.sendMessage(Text.of(TextColors.YELLOW, "/mb remove <block> [name]"));
-				return CommandResult.success();
+				throw new CommandException(Text.of(TextColors.RED, "<name> ", name, " node does not exist"));
 			}
 			child = name;
 		}

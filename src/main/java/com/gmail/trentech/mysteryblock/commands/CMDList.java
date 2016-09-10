@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -12,7 +11,6 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationList;
-import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -64,7 +62,7 @@ public class CMDList implements CommandExecutor {
 		}
 
 		if (src instanceof Player) {
-			PaginationList.Builder pages = Sponge.getServiceManager().provide(PaginationService.class).get().builder();
+			PaginationList.Builder pages = PaginationList.builder();
 
 			pages.linesPerPage(20).title(Text.builder().color(TextColors.DARK_GREEN).append(Text.of(TextColors.GREEN, "Blocks")).build());
 
