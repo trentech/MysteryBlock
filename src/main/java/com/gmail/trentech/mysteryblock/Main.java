@@ -1,10 +1,15 @@
 package com.gmail.trentech.mysteryblock;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
@@ -21,6 +26,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 import com.gmail.trentech.mysteryblock.commands.CommandManager;
 import com.gmail.trentech.mysteryblock.utils.ConfigManager;
 import com.gmail.trentech.mysteryblock.utils.Resource;
+import com.google.inject.Inject;
 
 import me.flibio.updatifier.Updatifier;
 
@@ -28,13 +34,25 @@ import me.flibio.updatifier.Updatifier;
 @Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, description = Resource.DESCRIPTION, authors = Resource.AUTHOR, url = Resource.URL, dependencies = { @Dependency(id = "Updatifier", optional = true) })
 public class Main {
 	
-	private static Logger log;
-	private static PluginContainer plugin;
+	@Inject @ConfigDir(sharedRoot = false)
+    private Path path;
 
+	@Inject
+	private Logger log;
+
+	private static PluginContainer plugin;
+	private static Main instance;
+	
 	@Listener
-	public void onPreInitialization(GamePreInitializationEvent event) {
-		plugin = (PluginContainer) Sponge.getPluginManager().getPlugin("mysteryblock").get();
-		log = getPlugin().getLogger();
+	public void onPreInitializationEvent(GamePreInitializationEvent event) {
+		plugin = Sponge.getPluginManager().getPlugin(Resource.ID).get();
+		instance = this;
+		
+		try {			
+			Files.createDirectories(path);		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Listener
@@ -42,7 +60,7 @@ public class Main {
 		Sponge.getEventManager().registerListeners(this, new EventManager());
 		Sponge.getCommandManager().register(this, new CommandManager().cmdMysteryBlock, "mysteryblock", "mb");
 
-		ConfigManager.get().init();
+		ConfigManager.init();
 	}
 
 	@Listener
@@ -73,6 +91,17 @@ public class Main {
 		configManager.getConfig().getNode("items").setValue(list);
 		configManager.save();
 
+		configManager = ConfigManager.get("blocks");
+
+		list = new ArrayList<>();
+
+		for (BlockType blockType : Sponge.getRegistry().getAllOf(BlockType.class)) {
+			list.add(blockType.getId());
+		}
+		
+		configManager.getConfig().getNode("blocks").setValue(list);
+		configManager.save();
+		
 		configManager = ConfigManager.get("potions");
 
 		list = new ArrayList<>();
@@ -85,11 +114,19 @@ public class Main {
 		configManager.save();
 	}
 
-	public static Logger getLog() {
+	public Logger getLog() {
 		return log;
 	}
 
+	public Path getPath() {
+		return path;
+	}
+	
 	public static PluginContainer getPlugin() {
 		return plugin;
+	}
+	
+	public static Main instance() {
+		return instance;
 	}
 }

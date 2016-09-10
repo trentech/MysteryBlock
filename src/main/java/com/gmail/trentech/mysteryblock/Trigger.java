@@ -27,7 +27,7 @@ public class Trigger {
 		Optional<ItemType> optionalItemType = Sponge.getRegistry().getType(ItemType.class, itemId);
 
 		if (!optionalItemType.isPresent()) {
-			Main.getLog().warn("ItemType " + itemId + " not found");
+			Main.instance().getLog().warn("ItemType " + itemId + " not found");
 			return;
 		}
 		ItemStack itemStack = ItemStack.of(optionalItemType.get(), quantity);
@@ -42,14 +42,14 @@ public class Trigger {
 		Optional<EntityType> optionalEntityType = Sponge.getRegistry().getType(EntityType.class, entityId);
 
 		if (!optionalEntityType.isPresent()) {
-			Main.getLog().warn(EntityTypes.PRIMED_TNT.getId());
-			Main.getLog().warn("EntityType " + entityId + " not found");
+			Main.instance().getLog().warn(EntityTypes.PRIMED_TNT.getId());
+			Main.instance().getLog().warn("EntityType " + entityId + " not found");
 			return;
 		}
 		EntityType entityType = (EntityType) optionalEntityType.get();
 
 		if ((entityType.equals(EntityTypes.HUMAN)) || (entityType.equals(EntityTypes.PLAYER)) || (entityType.equals(EntityTypes.ITEM))) {
-			Main.getLog().warn("EntityType " + entityId + " not found");
+			Main.instance().getLog().warn("EntityType " + entityId + " not found");
 			return;
 		}
 
@@ -64,7 +64,7 @@ public class Trigger {
 		Optional<PotionEffectType> optionalItemType = Sponge.getRegistry().getType(PotionEffectType.class, potionEffectId);
 
 		if (!optionalItemType.isPresent()) {
-			Main.getLog().warn("PotionEffectType " + potionEffectId + " not found");
+			Main.instance().getLog().warn("PotionEffectType " + potionEffectId + " not found");
 			return;
 		}
 		PotionEffect potionEffect = PotionEffect.of(optionalItemType.get(), 1, duration * 20);

@@ -1,7 +1,9 @@
 package com.gmail.trentech.mysteryblock.utils;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.block.BlockTypes;
 
@@ -13,56 +15,43 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 public class ConfigManager {
 	
-	private File file;
+	private Path path;
 	private CommentedConfigurationNode config;
 	private ConfigurationLoader<CommentedConfigurationNode> loader;
+	
+	private static ConcurrentHashMap<String, ConfigManager> configManagers = new ConcurrentHashMap<>();
 
-	public ConfigManager() {
-		String folder = "config" + File.separator + Resource.ID;
-
-		if (!new File(folder).isDirectory()) {
-			new File(folder).mkdirs();
-		}
-		file = new File(folder, "config.conf");
-
-		create();
-		load();
-	}
-
-	public ConfigManager(String configName) {
-		String folder = "config" + File.separator + Resource.ID;
-
-		if (!new File(folder).isDirectory()) {
-			new File(folder).mkdirs();
-		}
-		file = new File(folder, configName + ".conf");
-
-		create();
-		load();
-	}
-
-	public static ConfigManager get(String configName) {
-		return new ConfigManager(configName);
-	}
-
-	public static ConfigManager get() {
-		return new ConfigManager();
-	}
-
-	public CommentedConfigurationNode getConfig() {
-		return config;
-	}
-
-	public void save() {
+	private ConfigManager(String configName) {
 		try {
-			loader.save(config);
+			path = Main.instance().getPath().resolve(configName + ".conf");
+			
+			if (!Files.exists(path)) {		
+				Files.createFile(path);
+				Main.instance().getLog().info("Creating new " + path.getFileName() + " file...");
+			}		
 		} catch (IOException e) {
-			Main.getLog().error("Failed to save " + file.getName());
 			e.printStackTrace();
 		}
-	}
 
-	public ConfigManager init() {
+		load();
+	}
+	
+	public static ConfigManager get(String configName) {
+		return configManagers.get(configName);
+	}
+	
+	public static ConfigManager get() {
+		return configManagers.get("config");
+	}
+	
+	public static ConfigManager init() {
+		return init("config");
+	}
+	
+	public static ConfigManager init(String configName) {
+		ConfigManager configManager = new ConfigManager(configName);
+		CommentedConfigurationNode config = configManager.getConfig();
+
 		if (config.getNode("blocks").isVirtual()) {
 			if (config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId()).isVirtual()) {
 				config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example1", "percentage").setValue(Double.valueOf(0.2D)).setComment("0.0 to 1.0");
@@ -87,28 +76,32 @@ public class ConfigManager {
 				config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example4", "cancel").setValue(Boolean.valueOf(false));
 			}
 		}
-		save();
-		return this;
+		
+		configManager.save();
+		
+		return configManager;
 	}
 
-	private void create() {
-		if (!file.exists()) {
-			Main.getLog().info("Creating file " + file.getName());
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				Main.getLog().error("Failed to create " + file.getName());
-				e.printStackTrace();
-			}
-		}
+	public CommentedConfigurationNode getConfig() {
+		return config;
 	}
 
 	private void load() {
-		loader = HoconConfigurationLoader.builder().setFile(file).build();
+		loader = HoconConfigurationLoader.builder().setPath(path).build();
+		
 		try {
 			config = loader.load();
 		} catch (IOException e) {
-			Main.getLog().error("Failed to load " + file.getName());
+			Main.instance().getLog().error("Failed to load config");
+			e.printStackTrace();
+		}
+	}
+
+	public void save() {
+		try {
+			loader.save(config);
+		} catch (IOException e) {
+			Main.instance().getLog().error("Failed to save config");
 			e.printStackTrace();
 		}
 	}
