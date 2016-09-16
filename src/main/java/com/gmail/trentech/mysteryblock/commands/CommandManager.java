@@ -6,6 +6,7 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 
 import com.gmail.trentech.mysteryblock.Type;
+import com.gmail.trentech.mysteryblock.utils.Help;
 
 public class CommandManager {
 	
@@ -29,11 +30,19 @@ public class CommandManager {
 			.executor(new CMDList())
 			.build();
 	
+	public CommandSpec cmdHelp = CommandSpec.builder()
+		    .description(Text.of(" I need help with Mystery Block"))
+		    .permission("mysteryblock.cmd.mb")
+		    .arguments(GenericArguments.choices(Text.of("command"), Help.all()))
+		    .executor(new CMDHelp())
+		    .build();
+	
 	public CommandSpec cmdMysteryBlock = CommandSpec.builder()
 			.permission("mysteryblock.cmd.mb")
 			.child(cmdAdd, "add", "a")
 			.child(cmdRemove, "remove", "r" )
 			.child(cmdList, "list", "l" )
+			.child(cmdHelp, "help", "h" )
 			.executor(new CMDMysteryBlock())
 			.build();
 	

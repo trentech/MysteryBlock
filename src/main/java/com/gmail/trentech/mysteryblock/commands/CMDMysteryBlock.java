@@ -2,6 +2,8 @@ package com.gmail.trentech.mysteryblock.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Map.Entry;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -23,14 +25,20 @@ public class CMDMysteryBlock implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		List<Text> list = new ArrayList<>();
 
-		if (src.hasPermission("mysteryblock.cmd.add")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("add"))).append(Text.of(" /mysteryblock add")).build());
-		}
-		if (src.hasPermission("mysteryblock.cmd.remove")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("remove"))).append(Text.of(" /mysteryblock remove")).build());
-		}
-		if (src.hasPermission("mysteryblock.cmd.list")) {
-			list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp("list"))).append(Text.of(" /mysteryblock list")).build());
+		list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command to execute "))).onClick(TextActions.runCommand("/mysteryblock:mysteryblock help")).append(Text.of(" /mysteryblock help")).build());
+		
+		for (Entry<String, Help> entry : Help.all().entrySet()) {
+			String command = entry.getKey();
+
+			Optional<String> optionalPermission = entry.getValue().getPermission();
+			
+			if(optionalPermission.isPresent()) {
+				if (src.hasPermission(optionalPermission.get())) {
+					list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp(command))).append(Text.of(" /mysteryblock " + command)).build());
+				}
+			} else {
+				list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp(command))).append(Text.of(" /mysteryblock " + command)).build());
+			}
 		}
 
 		if (src instanceof Player) {
