@@ -28,16 +28,17 @@ public class CMDMysteryBlock implements CommandExecutor {
 		list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command to execute "))).onClick(TextActions.runCommand("/mysteryblock:mysteryblock help")).append(Text.of(" /mysteryblock help")).build());
 		
 		for (Entry<String, Help> entry : Help.all().entrySet()) {
-			String command = entry.getKey();
+			String id = entry.getKey();
+			String command = entry.getValue().getCommand();
 
 			Optional<String> optionalPermission = entry.getValue().getPermission();
 			
 			if(optionalPermission.isPresent()) {
 				if (src.hasPermission(optionalPermission.get())) {
-					list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp(command))).append(Text.of(" /mysteryblock " + command)).build());
+					list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp(id))).append(Text.of(" /mysteryblock " + command)).build());
 				}
 			} else {
-				list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp(command))).append(Text.of(" /mysteryblock " + command)).build());
+				list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp(id))).append(Text.of(" /mysteryblock " + command)).build());
 			}
 		}
 
