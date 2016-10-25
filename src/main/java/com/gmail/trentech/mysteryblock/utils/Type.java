@@ -1,4 +1,4 @@
-package com.gmail.trentech.mysteryblock;
+package com.gmail.trentech.mysteryblock.utils;
 
 public enum Type {
 	

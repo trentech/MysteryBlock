@@ -1,22 +1,16 @@
 package com.gmail.trentech.mysteryblock.commands;
 
-import java.util.Optional;
-
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
-import org.spongepowered.api.effect.potion.PotionEffectType;
-import org.spongepowered.api.entity.EntityType;
-import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.mysteryblock.Type;
 import com.gmail.trentech.mysteryblock.utils.ConfigManager;
+import com.gmail.trentech.mysteryblock.utils.Type;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -49,26 +43,6 @@ public class CMDAdd implements CommandExecutor {
 
 		if (!node.isVirtual()) {
 			throw new CommandException(Text.of(TextColors.RED, "<name> ", name, " already exists"));
-		}
-		
-		if (type.equals(Type.ITEM)) {
-			Optional<ItemType> optionalItemType = Sponge.getRegistry().getType(ItemType.class, data);
-
-			if (!optionalItemType.isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, "<data> ", data, " not a valid ItemType"));
-			}
-		} else if (type.equals(Type.ENTITY)) {
-			Optional<EntityType> optionalEntityType = Sponge.getRegistry().getType(EntityType.class, data);
-
-			if (!optionalEntityType.isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, "<data> ", data, " not a valid EntityType"));
-			}
-		} else if (type.equals(Type.POTION)) {
-			Optional<PotionEffectType> optionalPotionEffectType = Sponge.getRegistry().getType(PotionEffectType.class, data);
-
-			if (!optionalPotionEffectType.isPresent()) {
-				throw new CommandException(Text.of(TextColors.RED, "<data> ", data, " not a valid PotionEffectType"));
-			}
 		}
 
 		node.getNode("percentage").setValue(percentage);

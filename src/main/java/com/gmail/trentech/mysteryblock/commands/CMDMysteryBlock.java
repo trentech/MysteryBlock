@@ -2,9 +2,8 @@ package com.gmail.trentech.mysteryblock.commands;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Map.Entry;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -17,29 +16,28 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.mysteryblock.utils.Help;
+import com.gmail.trentech.helpme.help.Help;
 
 public class CMDMysteryBlock implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		if (Sponge.getPluginManager().isLoaded("helpme")) {
+			Help.executeList(src, Help.get("mb").get().getChildren());
+			
+			return CommandResult.success();
+		}
+		
 		List<Text> list = new ArrayList<>();
 
-		list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command to execute "))).onClick(TextActions.runCommand("/mysteryblock:mysteryblock help")).append(Text.of(" /mysteryblock help")).build());
-		
-		for (Entry<String, Help> entry : Help.all().entrySet()) {
-			String id = entry.getKey();
-			String command = entry.getValue().getCommand();
-
-			Optional<String> optionalPermission = entry.getValue().getPermission();
-			
-			if(optionalPermission.isPresent()) {
-				if (src.hasPermission(optionalPermission.get())) {
-					list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp(id))).append(Text.of(" /mysteryblock " + command)).build());
-				}
-			} else {
-				list.add(Text.builder().color(TextColors.GREEN).onHover(TextActions.showText(Text.of("Click command for more information "))).onClick(TextActions.executeCallback(Help.getHelp(id))).append(Text.of(" /mysteryblock " + command)).build());
-			}
+		if (src.hasPermission("mysteryblock.cmd.mb.add")) {
+			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/mysteryblock:mb add")).append(Text.of(" /mb add")).build());
+		}
+		if (src.hasPermission("mysteryblock.cmd.mb.remove")) {
+			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/mysteryblock:mb remove")).append(Text.of(" /mb remove")).build());
+		}
+		if (src.hasPermission("mysteryblock.cmd.mb.list")) {
+			list.add(Text.builder().color(TextColors.GREEN).onClick(TextActions.runCommand("/mysteryblock:mb list")).append(Text.of(" /mb list")).build());
 		}
 
 		if (src instanceof Player) {
