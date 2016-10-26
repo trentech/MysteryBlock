@@ -70,13 +70,13 @@ public class ConfigManager {
 					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example1", "amplifier").setValue(Integer.valueOf(1));
 					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example1", "cancel").setValue(Boolean.valueOf(false));
 					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example2", "percentage").setValue(Double.valueOf(0.2D)).setComment("0.0 to 1.0");
-					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example2", "type").setValue("ITEM").setComment("ENTITY, ITEM or POTION");
-					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example2", "data").setValue("minecraft:golden_apple");
+					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example2", "type").setValue("ENTITY").setComment("ENTITY, ITEM or POTION");
+					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example2", "data").setValue("minecraft:zombie");
 					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example2", "amplifier").setValue(Integer.valueOf(1));
 					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example2", "cancel").setValue(Boolean.valueOf(false));
 					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example3", "percentage").setValue(Double.valueOf(0.2D)).setComment("0.0 to 1.0");
-					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example3", "type").setValue("ITEM").setComment("ENTITY, ITEM or POTION");
-					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example3", "data").setValue("minecraft:blaze_powder");
+					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example3", "type").setValue("POTION").setComment("ENTITY, ITEM or POTION");
+					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example3", "data").setValue("minecraft:speed");
 					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example3", "amplifier").setValue(Integer.valueOf(1));
 					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example3", "cancel").setValue(Boolean.valueOf(false));
 					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example4", "percentage").setValue(Double.valueOf(0.2D)).setComment("0.0 to 1.0");
@@ -125,6 +125,8 @@ public class ConfigManager {
 		}
 
 		configManager.save();
+		
+		configManagers.put(configName, configManager);
 		
 		return configManager;
 	}
