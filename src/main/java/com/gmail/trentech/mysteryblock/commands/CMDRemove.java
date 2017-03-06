@@ -9,7 +9,8 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.mysteryblock.utils.ConfigManager;
+import com.gmail.trentech.mysteryblock.Main;
+import com.gmail.trentech.pjc.core.ConfigManager;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -17,7 +18,7 @@ public class CMDRemove implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		String child = args.<BlockType>getOne("block").get().getId();
 
-		ConfigManager configManager = ConfigManager.get();
+		ConfigManager configManager = ConfigManager.get(Main.getPlugin());
 		ConfigurationNode parent = configManager.getConfig().getNode("blocks");
 		ConfigurationNode node = parent.getNode(child);
 

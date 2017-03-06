@@ -1,11 +1,7 @@
-package com.gmail.trentech.mysteryblock.utils;
+package com.gmail.trentech.mysteryblock.init;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
@@ -17,51 +13,62 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 
 import com.gmail.trentech.mysteryblock.Main;
+import com.gmail.trentech.pjc.core.ConfigManager;
+import com.gmail.trentech.pjc.help.Argument;
+import com.gmail.trentech.pjc.help.Help;
+import com.gmail.trentech.pjc.help.Usage;
 
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
 
-public class ConfigManager {
-	
-	private Path path;
-	private CommentedConfigurationNode config;
-	private ConfigurationLoader<CommentedConfigurationNode> loader;
-	
-	private static ConcurrentHashMap<String, ConfigManager> configManagers = new ConcurrentHashMap<>();
+public class Common {
 
-	private ConfigManager(String configName) {
-		try {
-			path = Main.instance().getPath().resolve(configName + ".conf");
-			
-			if (!Files.exists(path)) {		
-				Files.createFile(path);
-				Main.instance().getLog().info("Creating new " + path.getFileName() + " file...");
-			}		
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		load();
+	public static void init() {
+		initConfig(Main.getPlugin().getId());
+		initHelp();
 	}
 	
-	public static ConfigManager get(String configName) {
-		return configManagers.get(configName);
+	public static void initHelp() {
+		Usage usageAdd = new Usage(Argument.of("<block>", "Specifies to id of the BlockType"))
+				.addArgument(Argument.of("<name>", "Spcifies the new name of the event"))
+				.addArgument(Argument.of("<percentage>", "The percent chance of triggering this event. Value should be 0-1"))
+				.addArgument(Argument.of("<type>", "Specifies the event type. ITEM spawns item, ENTITY spawns entity,POTION adds potion effect to the triggerer"))
+				.addArgument(Argument.of("<data>", "Arugment depends on <type>. ITEM = ItemType, ENTITY = EntityType, POTION = PotionEffectType"))
+				.addArgument(Argument.of("[-a <amplifier>]", "Arugment depends on <type>. ITEM = quantity, ENTITY = quantity, POTION = duration"))
+				.addArgument(Argument.of("[-c]", "Specifies to cancel any events related with this block"));
+		
+		Help helpAdd = new Help("mb add", "add", "Create a new Mystery Block event")
+				.setPermission("mysteryblock.cmd.mb.add")
+				.setUsage(usageAdd)
+				.addExample("/mb add minecraft:IRON_ORE test 0.5 ITEM minecraft:golden_nugget -a 3")
+				.addExample("/mb add minecraft:DIAMOND_ORE test 0.2 POTION minecraft:speed -a 60")
+				.addExample("/mb add minecraft:IRON_ORE test 0.05 ENTITY minecraft:zombie -c");
+		
+		Usage usageRemove = new Usage(Argument.of("<block>", "Specifies to id of the BlockType"))
+				.addArgument(Argument.of("[name]", "Specifies the new name of the event. If not specified all events will be removed under <block>"));
+				
+		Help helpRemove = new Help("mb remove", "remove", "Removes Mystery Block event")
+				.setPermission("mysteryblock.cmd.mb.remove")
+				.setUsage(usageRemove)
+				.addExample("/mb remove minecraft:IRON_ORE")
+				.addExample("/mb remove minecraft:IRON_ORE test");
+		
+		Help helpList = new Help("mb list", "list", "Lists all events")
+				.setPermission("mysteryblock.cmd.mb.list");
+		
+		Help helpMb = new Help("mb", "mb", "Base command for Mystery Block")
+				.setPermission("mysterblock.cmd.mb")
+				.addChild(helpList)
+				.addChild(helpRemove)
+				.addChild(helpAdd);
+		
+		Help.register(helpMb);
 	}
 	
-	public static ConfigManager get() {
-		return configManagers.get("config");
-	}
-	
-	public static ConfigManager init() {
-		return init("config");
-	}
-	
-	public static ConfigManager init(String configName) {
-		ConfigManager configManager = new ConfigManager(configName);
+	public static void initConfig(String configName) {
+		ConfigManager configManager = ConfigManager.init(Main.getPlugin(), configName);
 		CommentedConfigurationNode config = configManager.getConfig();
 
-		if(configName.equals("config")) {
+		if(configName.equals(Main.getPlugin().getId())) {
 			if (config.getNode("blocks").isVirtual()) {
 				if (config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId()).isVirtual()) {
 					config.getNode("blocks", BlockTypes.DIAMOND_ORE.getId(), "example1", "percentage").setValue(Double.valueOf(0.2D)).setComment("0.0 to 1.0");
@@ -123,35 +130,7 @@ public class ConfigManager {
 
 			configManager.getConfig().getNode("potions").setValue(list);
 		}
-
+		
 		configManager.save();
-		
-		configManagers.put(configName, configManager);
-		
-		return configManager;
-	}
-
-	public CommentedConfigurationNode getConfig() {
-		return config;
-	}
-
-	private void load() {
-		loader = HoconConfigurationLoader.builder().setPath(path).build();
-		
-		try {
-			config = loader.load();
-		} catch (IOException e) {
-			Main.instance().getLog().error("Failed to load config");
-			e.printStackTrace();
-		}
-	}
-
-	public void save() {
-		try {
-			loader.save(config);
-		} catch (IOException e) {
-			Main.instance().getLog().error("Failed to save config");
-			e.printStackTrace();
-		}
 	}
 }

@@ -18,7 +18,7 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.filter.cause.First;
 
-import com.gmail.trentech.mysteryblock.utils.ConfigManager;
+import com.gmail.trentech.pjc.core.ConfigManager;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -48,7 +48,7 @@ public class EventManager {
 			}
 			BlockState blockState = snapshot.getState();
 			
-			ConfigurationNode node = ConfigManager.get().getConfig().getNode("blocks", blockState.getType().getId());
+			ConfigurationNode node = ConfigManager.get(Main.getPlugin()).getConfig().getNode("blocks", blockState.getType().getId());
 			
 			if (node.isVirtual()) {
 				continue;

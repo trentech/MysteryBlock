@@ -16,15 +16,14 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import com.gmail.trentech.mysteryblock.commands.CommandManager;
-import com.gmail.trentech.mysteryblock.utils.CommandHelp;
-import com.gmail.trentech.mysteryblock.utils.ConfigManager;
+import com.gmail.trentech.mysteryblock.init.Common;
 import com.gmail.trentech.mysteryblock.utils.Resource;
 import com.google.inject.Inject;
 
 import me.flibio.updatifier.Updatifier;
 
 @Updatifier(repoName = Resource.NAME, repoOwner = Resource.AUTHOR, version = Resource.VERSION)
-@Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, description = Resource.DESCRIPTION, authors = Resource.AUTHOR, url = Resource.URL, dependencies = { @Dependency(id = "Updatifier", optional = true), @Dependency(id = "helpme", version = "0.2.1", optional = true) })
+@Plugin(id = Resource.ID, name = Resource.NAME, version = Resource.VERSION, description = Resource.DESCRIPTION, authors = Resource.AUTHOR, url = Resource.URL, dependencies = { @Dependency(id = "Updatifier", optional = true), @Dependency(id = "pjc", optional = false) })
 public class Main {
 	
 	@Inject @ConfigDir(sharedRoot = false)
@@ -53,17 +52,16 @@ public class Main {
 		Sponge.getEventManager().registerListeners(this, new EventManager());
 		Sponge.getCommandManager().register(this, new CommandManager().cmdMysteryBlock, "mysteryblock", "mb");
 
-		ConfigManager.init();
-		
-		CommandHelp.init();
+		Common.initConfig(Main.getPlugin().getId());
+		Common.initHelp();
 	}
 
 	@Listener
 	public void onStartedServer(GameStartedServerEvent event) {
-		ConfigManager.init("entities");
-		ConfigManager.init("items");
-		ConfigManager.init("blocks");
-		ConfigManager.init("potions");
+		Common.initConfig("entities");
+		Common.initConfig("items");
+		Common.initConfig("blocks");
+		Common.initConfig("potions");
 	}
 
 	public Logger getLog() {

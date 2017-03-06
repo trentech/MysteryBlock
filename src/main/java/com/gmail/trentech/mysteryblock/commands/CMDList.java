@@ -14,7 +14,8 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.trentech.mysteryblock.utils.ConfigManager;
+import com.gmail.trentech.mysteryblock.Main;
+import com.gmail.trentech.pjc.core.ConfigManager;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
@@ -23,7 +24,7 @@ public class CMDList implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		List<Text> list = new ArrayList<>();
 
-		ConfigurationNode node = ConfigManager.get().getConfig().getNode("blocks");
+		ConfigurationNode node = ConfigManager.get(Main.getPlugin()).getConfig().getNode("blocks");
 
 		int line = 0;
 		for (Entry<Object, ? extends ConfigurationNode> child : node.getChildrenMap().entrySet()) {
