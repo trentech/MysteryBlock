@@ -12,10 +12,6 @@ import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.cause.entity.spawn.EntitySpawnCause;
-import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.world.Location;
@@ -35,7 +31,7 @@ public class Trigger {
 		Item entity = (Item) location.getExtent().createEntity(EntityTypes.ITEM, location.getPosition());
 		entity.offer(Keys.REPRESENTED_ITEM, itemStack.createSnapshot());
 
-		location.getExtent().spawnEntity(entity, Cause.of(NamedCause.source(EntitySpawnCause.builder().entity(entity).type(SpawnTypes.PLUGIN).build())));
+		location.getExtent().spawnEntity(entity);
 	}
 
 	public static void spawnEntity(Location<World> location, String entityId, int quantity) {
@@ -56,7 +52,7 @@ public class Trigger {
 		for (int i = 0; i < quantity; i++) {
 			Entity entity = location.getExtent().createEntity(entityType, location.getPosition());
 
-			location.getExtent().spawnEntity(entity, Cause.of(NamedCause.source(EntitySpawnCause.builder().entity(entity).type(SpawnTypes.PLUGIN).build())));
+			location.getExtent().spawnEntity(entity);
 		}
 	}
 

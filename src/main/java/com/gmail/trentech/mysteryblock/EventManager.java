@@ -14,8 +14,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.filter.cause.First;
 
 import com.gmail.trentech.pjc.core.ConfigManager;
@@ -83,7 +81,7 @@ public class EventManager {
 					continue;
 				}
 				
-				Sponge.getScheduler().createTaskBuilder().delayTicks(5).execute(e -> snapshot.getLocation().get().setBlock(blockState, Cause.of(NamedCause.source(Main.getPlugin())))).submit(Main.getPlugin());
+				Sponge.getScheduler().createTaskBuilder().delayTicks(5).execute(e -> snapshot.getLocation().get().setBlock(blockState)).submit(Main.getPlugin());
 			}
 			
 			Sponge.getScheduler().createTaskBuilder().delayTicks(20).execute(e -> players.remove(player.getUniqueId())).submit(Main.getPlugin());
